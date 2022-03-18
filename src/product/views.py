@@ -20,4 +20,7 @@ class ProductsList(APIView):
 
         products = Product.objects.all().order_by(sortby)
 
+        if "department" in request.GET:
+            products = products.filter(department__exact=request.GET["department"])
+
         return Response(ProductSerializer(products, many=True).data)
