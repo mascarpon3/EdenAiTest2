@@ -59,3 +59,13 @@ class GetProductsListtest(TestCase):
         response = self.client.get('http://localhost:8000/api/all_products?minprice=70&maxprice=120')
         ordered_response_names = [p["name"] for p in response.json()]
         self.assertEqual(ordered_response_names, ["cafetière"])
+
+    def test_filter_by_price_and_department(self):
+        response = self.client.get('http://localhost:8000/api/all_products?maxprice=70&department=electromenager')
+        ordered_response_names = [p["name"] for p in response.json()]
+        self.assertEqual(ordered_response_names, ["radio"])
+
+    def test_order_by_price_and_filter_by_department(self):
+        response = self.client.get('http://localhost:8000/api/all_products?orderby=price&department=electromenager')
+        ordered_response_names = [p["name"] for p in response.json()]
+        self.assertEqual(ordered_response_names, ["radio", "cafetière"])
