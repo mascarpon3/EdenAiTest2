@@ -19,5 +19,5 @@ from product.views import ProductsList
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/all_products', ProductsList.as_view())
+    path('api/products', ProductsList.as_view())
 ]
