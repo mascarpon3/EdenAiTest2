@@ -1,5 +1,5 @@
 from django.test import TestCase
-from product.models import Product, Discount
+from product.models import Product
 
 
 class GetProductsListtest(TestCase):
