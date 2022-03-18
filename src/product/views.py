@@ -23,4 +23,24 @@ class ProductsList(APIView):
         if "department" in request.GET:
             products = products.filter(department__exact=request.GET["department"])
 
+        if "maxprice" in request.GET:
+            try:
+                float(request.GET['maxprice'])
+            except ValueError:
+                return HttpResponse(
+                    f"maxprice must be an integer or a float",
+                    status=400,
+                )
+            products = products.filter(price__lte=request.GET["maxprice"])
+
+        if "minprice" in request.GET:
+            try:
+                float(request.GET['minprice'])
+            except ValueError:
+                return HttpResponse(
+                    f"mineprice must be an integer or a float",
+                    status=400,
+                )
+            products = products.filter(price__gte=request.GET["minprice"])
+
         return Response(ProductSerializer(products, many=True).data)
