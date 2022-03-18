@@ -7,15 +7,17 @@ from django.http import HttpResponse
 
 class ProductsList(APIView):
     def get(self, request, format=None):
-
-        if "sortby" not in request.GET:
-            products = Product.objects.all()
-        elif request.GET["sortby"] not in ["price", "name"]:
-            return HttpResponse(
-                f"sortby should be ether 'price' or 'name' not {request.GET['sortby']}",
-                status=400,
-            )
+        if "sortby" in request.GET:
+            if request.GET["sortby"] in ["price", "name"]:
+                sortby = request.GET["sortby"]
+            else:
+                return HttpResponse(
+                    f"sortby should be ether 'price' or 'name' not {request.GET['sortby']}",
+                    status=400,
+                )
         else:
-            products = Product.objects.all().order_by(request.GET["sortby"])
+            sortby = "name"
+
+        products = Product.objects.all().order_by(sortby)
 
         return Response(ProductSerializer(products, many=True).data)
