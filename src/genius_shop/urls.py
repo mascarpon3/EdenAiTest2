@@ -17,9 +17,11 @@ from django.contrib import admin
 from django.urls import path
 from product.views import ProductsList
 from account.views import UserRegistrationList
+from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/products', ProductsList.as_view()),
     path('api/account/signup', UserRegistrationList.as_view()),
+    path('api/account/login', obtain_auth_token)
 ]

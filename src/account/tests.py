@@ -3,12 +3,11 @@ from django.contrib.auth.models import User
 import ast
 
 
-class GetProductsListtest(TestCase):
+class SignUpTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         User.objects.create(
             username="Eden",
-            password='123sOlEil',
             email="eden.test@hello.wolrd",
         )
 
@@ -54,3 +53,24 @@ class GetProductsListtest(TestCase):
 
         user = User.objects.get(username="Charles")
         self.assertEqual(user.email, "charles.test@hello.world")
+
+
+class LogInTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        User.objects.create(
+            username="Eden",
+            password='good_password',
+            email="eden.test@hello.wolrd",
+        )
+
+    def test_wrong_password(self):
+        result = self.client.post(
+            "http://localhost:8000/api/account/login",
+            data={
+                "username": "Eden",
+                "password": 'wrong_password',
+            }
+        ).content
+        expected = b'{"non_field_errors":["Unable to log in with provided credentials."]}'
+        self.assertEqual(expected, result)
