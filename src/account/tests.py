@@ -3,9 +3,6 @@ from django.contrib.auth.models import User
 import ast
 
 
-BASE_URL = 'http://localhost:8000/api/account/signup?'
-
-
 class GetProductsListtest(TestCase):
     @classmethod
     def setUpTestData(cls):
