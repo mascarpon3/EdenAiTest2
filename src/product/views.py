@@ -1,11 +1,17 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+
 from product.serializers import ProductSerializer
 from product.models import Product
 from django.http import HttpResponse
 
 
 class ProductsList(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, format=None):
         if "sortby" in request.GET:
             if request.GET["sortby"] in ["price", "name"]:
