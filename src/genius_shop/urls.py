@@ -19,7 +19,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 
 from product.views import ProductsList
 from account.views import UserRegistrationList
-from cart.views import AddProductToTheCart
+from cart.views import AddProductsToTheCart
 
 
 urlpatterns = [
@@ -27,5 +27,5 @@ urlpatterns = [
     path('api/products', ProductsList.as_view()),
     path('api/account/signup', UserRegistrationList.as_view()),
     path('api/account/login', obtain_auth_token),
-    path('api/cart/add_product', AddProductToTheCart.as_view())
+    path('api/cart/add_products', AddProductsToTheCart.as_view())
 ]

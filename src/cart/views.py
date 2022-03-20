@@ -8,7 +8,7 @@ from cart.serializers import CartItemsSerializer
 from product.models import Product
 
 
-class AddProductToTheCart(APIView):
+class AddProductsToTheCart(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 

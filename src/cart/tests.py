@@ -34,7 +34,7 @@ class CartAddProducts(APITestCase):
         cls.api_client = APIClient(HTTP_AUTHORIZATION='Token ' + token.key)
 
     def test_add_one_product(self):
-        url = 'http://localhost:8000/api/cart/add_product'
+        url = 'http://localhost:8000/api/cart/add_products'
         data = {"product_id": 1, "quantity": 1}
         self.api_client.post(url, headers=self.headers, data=data)
 
@@ -42,7 +42,7 @@ class CartAddProducts(APITestCase):
         self.assertEqual(cart_items.quantity, 1)
 
     def test_add_one_product_and_another(self):
-        url = 'http://localhost:8000/api/cart/add_product'
+        url = 'http://localhost:8000/api/cart/add_products'
         data = {"product_id": 1, "quantity": 1}
         self.api_client.post(url, headers=self.headers, data=data)
         self.api_client.post(url, headers=self.headers, data=data)
@@ -51,7 +51,7 @@ class CartAddProducts(APITestCase):
         self.assertEqual(cart_items.quantity, 2)
 
     def test_add_Three_product(self):
-        url = 'http://localhost:8000/api/cart/add_product'
+        url = 'http://localhost:8000/api/cart/add_products'
         data = {"product_id": 1, "quantity": 3}
         self.api_client.post(url, headers=self.headers, data=data)
 
@@ -59,7 +59,7 @@ class CartAddProducts(APITestCase):
         self.assertEqual(cart_items.quantity, 3)
 
     def test_add_more_products_than_there_are(self):
-        url = 'http://localhost:8000/api/cart/add_product'
+        url = 'http://localhost:8000/api/cart/add_products'
         data = {"product_id": 1, "quantity": 12}
         response = self.api_client.post(url, headers=self.headers, data=data).content.decode("utf-8")
         expected = '{"stock":"you are trying to buy 12 cafetière(s) but we have only 3 left."}'
