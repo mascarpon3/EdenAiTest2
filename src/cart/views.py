@@ -2,9 +2,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authtoken.models import Token
 
+from account.utils import get_user_from_post_request
 from cart.serializers import CartItemsSerializer
+from cart.models import CartItems
 from product.models import Product
 
 
@@ -13,12 +14,9 @@ class AddProductsToTheCart(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
-        key = request.META["HTTP_AUTHORIZATION"].replace("Token ", "")
-        user_id = Token.objects.get(key=key).user.id
-
         serializer = CartItemsSerializer(data={
             "product": request.data["product_id"],
-            "user": user_id,
+            "user": get_user_from_post_request(request).id,
             "quantity": int(request.data["quantity"]),
         })
 
@@ -33,3 +31,12 @@ class AddProductsToTheCart(APIView):
             data = serializer.errors
 
         return Response(data)
+
+
+class ValidateCart(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, format=None):
+        all_items = CartItems.objects.filter(user=get_user_from_post_request(request))
+        return Response({"response": f"it's fine {all_items} for {all_items.compute_price}"})

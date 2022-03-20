@@ -9,9 +9,5 @@ class CartItems(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
 
-    def compute_price(self):
-        product_price = Product.obejct.get(id=self.product)
-        return product_price * self.qatity
-
     def __str__(self):
-        return f"{self.user.username}: {self.product.name}"
+        return f"{self.user.username}: {self.product.name} ({self.quantity})"
