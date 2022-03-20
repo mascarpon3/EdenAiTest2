@@ -28,6 +28,7 @@ class CartAddProducts(APITestCase):
             department="electromenager",
             stock=2,
         )
+
         cls.url = 'http://localhost:8000/api/cart/add_products'
         cls.user = User.objects.create(username="Eden")
         token = Token.objects.get(user__username='Eden')
@@ -59,5 +60,6 @@ class CartAddProducts(APITestCase):
     def test_add_more_products_than_there_are(self):
         data = {"product_id": 1, "quantity": 12}
         response = self.api_client.post(self.url, headers=self.headers, data=data).content.decode("utf-8")
+
         expected = '{"stock":"you are trying to buy 12 cafetière(s) but we have only 3 left."}'
         self.assertEqual(expected, response)
