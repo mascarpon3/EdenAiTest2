@@ -15,13 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from rest_framework.authtoken.views import obtain_auth_token
+
 from product.views import ProductsList
 from account.views import UserRegistrationList
-from rest_framework.authtoken.views import obtain_auth_token
+from cart.views import AddProductToTheCart
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/products', ProductsList.as_view()),
     path('api/account/signup', UserRegistrationList.as_view()),
-    path('api/account/login', obtain_auth_token)
+    path('api/account/login', obtain_auth_token),
+    path('api/cart/add_product', AddProductToTheCart.as_view())
 ]
