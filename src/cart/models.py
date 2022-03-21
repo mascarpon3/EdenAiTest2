@@ -33,14 +33,18 @@ class CartItems(models.Model):
 
     def compute_price(self):
         discount = self.product.discount
-        nb_free_products = int(
-               self.quantity / (discount.how_many_bought + discount.how_many_offered)
-        ) * discount.how_many_offered
+        return (self.quantity - self.compute_nb_free_products()) * (1 - discount.ratio) * self.product.price
 
-        return (self.quantity - nb_free_products) * (1 - discount.ratio) * self.product.price
+    def compute_nb_free_products(self):
+        discount = self.product.discount
+        pack_size = discount.how_many_bought + discount.how_many_offered
+        nb_free_products_1 = int(self.quantity / pack_size) * discount.how_many_offered
+        nb_free_products_2 = max(self.quantity % pack_size - discount.how_many_bought, 0)
+        return nb_free_products_1 + nb_free_products_2
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Cart.objects.create(user=instance)
+

@@ -1,9 +1,67 @@
+from django.contrib.auth.models import User
+from django.test import TestCase
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.authtoken.models import Token
-from django.contrib.auth.models import User
 
-from product.models import Product
+from product.models import Product, Discount
 from cart.models import Cart, CartItems
+
+
+class CartComputePrice(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = User.objects.create(
+            username="Eden"
+        )
+        cls.cart = Cart.objects.get(user=cls.user)
+        discount = Discount.objects.create(
+            ratio=0.1,
+            how_many_bought=3,
+            how_many_offered=2,
+        )
+        product_1 = Product.objects.create(
+            name=f'cafetière',
+            price=80,
+            department="electromenager",
+            stock=6,
+            discount=discount
+        )
+        product_2 = Product.objects.create(
+            name=f'corde à sauter',
+            price=12,
+            department="sport",
+            stock=20,
+            discount=discount
+        )
+        cls.cart_items_1 = CartItems.objects.create(
+            cart=cls.cart,
+            product=product_1,
+            quantity=4,
+        )
+        cls.cart_items_2 = CartItems.objects.create(
+            cart=cls.cart,
+            product=product_2,
+            quantity=10,
+        )
+
+    def test_compute_nb_free_products_1(self):
+        result_nb_free_products = self.cart_items_1.compute_nb_free_products()
+        expected = 1
+
+        self.assertEqual(expected, result_nb_free_products)
+
+    def test_compute_nb_free_products_2(self):
+        result_nb_free_products = self.cart_items_2.compute_nb_free_products()
+        expected = 4
+
+        self.assertEqual(expected, result_nb_free_products)
+
+    def test_compute_price(self):
+        result_price = self.cart.compute_price()
+        expected = ((4 - 1) * 80 + (10 - 4) * 12) * (1 - 0.1)
+
+        self.assertEqual(expected, result_price)
 
 
 class CartAddProducts(APITestCase):
