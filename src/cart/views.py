@@ -38,5 +38,5 @@ class ValidateCart(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
-        all_items = CartItems.objects.filter(user=get_user_from_post_request(request))
+        price = Cart.objects.get(user=get_user_from_post_request(request))
         return Response({"response": f"it's fine {all_items} for {all_items.compute_price}"})

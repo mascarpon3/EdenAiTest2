@@ -13,11 +13,14 @@ class Cart(models.Model):
     validated = models.BooleanField(default=False)
     datetime_updated = models.DateTimeField(auto_now_add=True)
 
-    def get_items(self):
+    def __str__(self):
+        return f"{self.user}'s cart: {self.compute_price()}€"
+
+    def get_all_items(self):
         return CartItems.objects.filter(cart=self)
 
-    def __str__(self):
-        return f"{self.user}: {self.get_items()}"
+    def compute_price(self):
+        return sum([items.compute_price() for items in self.get_all_items()])
 
 
 class CartItems(models.Model):
@@ -26,7 +29,15 @@ class CartItems(models.Model):
     quantity = models.IntegerField(default=1)
 
     def __str__(self):
-        return f"{self.cart.user.username}: {self.product.name} ({self.quantity})"
+        return f"{self.product.name} ({self.quantity}): {self.compute_price()}€"
+
+    def compute_price(self):
+        discount = self.product.discount
+        nb_free_products = int(
+               self.quantity / (discount.how_many_bought + discount.how_many_offered)
+        ) * discount.how_many_offered
+
+        return (self.quantity - nb_free_products) * (1 - discount.ratio) * self.product.price
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
