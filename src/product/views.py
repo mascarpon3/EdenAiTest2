@@ -15,16 +15,14 @@ class ProductsList(APIView):
     def get(self, request, format=None):
         if "sortby" in request.GET:
             if request.GET["sortby"] in ["price", "name"]:
-                sortby = request.GET["sortby"]
+                products = Product.objects.all().order_by(request.GET["sortby"])
             else:
                 return HttpResponse(
                     f"sortby should be ether 'price' or 'name' not {request.GET['sortby']}",
                     status=400,
                 )
         else:
-            sortby = "name"
-
-        products = Product.objects.all().order_by(sortby)
+            products = Product.objects.all()
 
         if "department" in request.GET:
             products = products.filter(department__exact=request.GET["department"])
