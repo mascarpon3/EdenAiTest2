@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from account.utils import get_user_from_post_request
 from cart.serializers import CartItemsSerializer
-from cart.models import CartItems
+from cart.models import Cart, CartItems
 from product.models import Product
 
 
@@ -16,7 +16,7 @@ class AddProductsToTheCart(APIView):
     def post(self, request, format=None):
         serializer = CartItemsSerializer(data={
             "product": request.data["product_id"],
-            "user": get_user_from_post_request(request).id,
+            "cart": Cart.objects.get(user=get_user_from_post_request(request)).id,
             "quantity": int(request.data["quantity"]),
         })
 

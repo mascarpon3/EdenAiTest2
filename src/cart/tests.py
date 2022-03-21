@@ -3,7 +3,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 
 from product.models import Product
-from cart.models import CartItems
+from cart.models import Cart, CartItems
 
 
 class CartAddProducts(APITestCase):
@@ -30,7 +30,7 @@ class CartAddProducts(APITestCase):
         )
 
         cls.url = 'http://localhost:8000/api/cart/add_products'
-        cls.user = User.objects.create(username="Eden")
+        cls.cart = Cart.objects.get(user=User.objects.create(username="Eden"))
         token = Token.objects.get(user__username='Eden')
         cls.headers = {'Authorization': 'Token ' + token.key}
         cls.api_client = APIClient(HTTP_AUTHORIZATION='Token ' + token.key)
@@ -39,7 +39,7 @@ class CartAddProducts(APITestCase):
         data = {"product_id": 1, "quantity": 1}
         self.api_client.post(self.url, headers=self.headers, data=data)
 
-        cart_items = CartItems.objects.get(user=self.user, product=Product(id=data["product_id"]))
+        cart_items = CartItems.objects.get(cart=self.cart, product=Product(id=data["product_id"]))
         self.assertEqual(cart_items.quantity, 1)
 
     def test_add_one_product_and_another(self):
@@ -47,14 +47,14 @@ class CartAddProducts(APITestCase):
         self.api_client.post(self.url, headers=self.headers, data=data)
         self.api_client.post(self.url, headers=self.headers, data=data)
 
-        cart_items = CartItems.objects.get(user=self.user, product=Product(id=data["product_id"]))
+        cart_items = CartItems.objects.get(cart=self.cart, product=Product(id=data["product_id"]))
         self.assertEqual(cart_items.quantity, 2)
 
     def test_add_Three_product(self):
         data = {"product_id": 1, "quantity": 3}
         self.api_client.post(self.url, headers=self.headers, data=data)
 
-        cart_items = CartItems.objects.get(user=self.user, product=Product(id=data["product_id"]))
+        cart_items = CartItems.objects.get(cart=self.cart, product=Product(id=data["product_id"]))
         self.assertEqual(cart_items.quantity, 3)
 
     def test_add_more_products_than_there_are(self):

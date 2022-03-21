@@ -6,21 +6,21 @@ from django.db.models import Q
 class CartItemsSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItems
-        fields = ('user', 'product', 'quantity')
+        fields = ('cart', 'product', 'quantity')
 
     def save(self):
         existing_cart_items = CartItems.objects.filter(
-            Q(product=self.validated_data["product"].id) & Q(user=self.validated_data['user'].id)
+            Q(product=self.validated_data["product"].id) & Q(cart=self.validated_data['cart'].id)
         )
         if existing_cart_items:
             assert len(existing_cart_items) == 1
             cart_items = CartItems.objects.get(
-                product=self.validated_data["product"].id, user=self.validated_data['user'].id
+                product=self.validated_data["product"].id, cart=self.validated_data['cart'].id
             )
             cart_items.quantity += self.validated_data['quantity']
         else:
             cart_items = CartItems(
-                user=self.validated_data['user'],
+                cart=self.validated_data['cart'],
                 product=self.validated_data['product'],
                 quantity=self.validated_data['quantity'],
             )
