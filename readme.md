@@ -20,10 +20,6 @@ user_name must be unique and both password must match.
 
 You will get a token in return which is required for any other request to the server. 
 
-## signin
-
-send a post request to 
-
 ## Get products
 
 send a get request to `http://localhost:8000/api/products`
