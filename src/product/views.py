@@ -2,10 +2,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from django.http import HttpResponse
 
 from product.serializers import ProductSerializer
 from product.models import Product
-from django.http import HttpResponse
 
 
 class ProductsList(APIView):

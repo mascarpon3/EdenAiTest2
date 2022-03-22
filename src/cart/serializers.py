@@ -1,7 +1,8 @@
 from rest_framework import serializers
-from cart.models import Cart, CartItems
 from django.db.models import Q
+
 from product.serializers import ProductSerializer
+from cart.models import Cart, CartItems
 
 
 class CartItemsSerializer(serializers.ModelSerializer):
