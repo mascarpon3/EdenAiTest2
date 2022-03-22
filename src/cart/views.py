@@ -48,11 +48,15 @@ class ValidateCart(APIView):
         except:
             return Response({"cart": "cart is empty"})
 
-        cart_items = CartItems.objects.filter(cart=cart)
+        all_cart_items = CartItems.objects.filter(cart=cart)
         cart.validated = True
         cart.save()
 
+        for cart_items in all_cart_items:
+            cart_items.product.stock -= cart_items.quantity
+            cart_items.product.save()
+
         return Response({
             "cart": CartSerializer(cart).data,
-            "cart_items": FormCartItemsSerializer(cart_items, many=True).data,
+            "cart_items": FormCartItemsSerializer(all_cart_items, many=True).data,
         })
