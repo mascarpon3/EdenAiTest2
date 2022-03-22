@@ -14,7 +14,7 @@ class CartComputePrice(TestCase):
         cls.user = User.objects.create(
             username="Eden"
         )
-        cls.cart = Cart.objects.get(user=cls.user)
+        cls.cart = Cart.objects.create(user=cls.user)
         discount = Discount.objects.create(
             ratio=0.1,
             how_many_bought=3,
@@ -88,7 +88,7 @@ class CartAddProducts(APITestCase):
         )
 
         cls.url = 'http://localhost:8000/api/cart/add_products'
-        cls.cart = Cart.objects.get(user=User.objects.create(username="Eden"))
+        cls.cart = Cart.objects.create(user=User.objects.create(username="Eden"))
         token = Token.objects.get(user__username='Eden')
         cls.headers = {'Authorization': 'Token ' + token.key}
         cls.api_client = APIClient(HTTP_AUTHORIZATION='Token ' + token.key)

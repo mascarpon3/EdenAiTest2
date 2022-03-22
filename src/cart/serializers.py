@@ -1,12 +1,13 @@
 from rest_framework import serializers
-from cart.models import CartItems
+from cart.models import Cart, CartItems
 from django.db.models import Q
+from product.serializers import ProductSerializer
 
 
 class CartItemsSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItems
-        fields = ('cart', 'product', 'quantity')
+        fields = ('id', 'cart', 'product', 'quantity')
 
     def save(self):
         existing_cart_items = CartItems.objects.filter(
@@ -36,3 +37,18 @@ class CartItemsSerializer(serializers.ModelSerializer):
         response = f"{cart_items.quantity} {self.validated_data['product']}(s) successfully added to the cart."
 
         return response, cart_items.quantity
+
+
+class FormCartItemsSerializer(serializers.ModelSerializer):
+    product = ProductSerializer()
+
+    class Meta:
+        model = CartItems
+        fields = ('id', 'cart', 'product', 'quantity')
+
+
+class CartSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Cart
+        fields = "__all__"

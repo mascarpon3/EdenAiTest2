@@ -4,7 +4,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from account.utils import get_user_from_post_request
-from cart.serializers import CartItemsSerializer
+from cart.serializers import FormCartItemsSerializer, CartItemsSerializer, CartSerializer
 from cart.models import Cart, CartItems
 from product.models import Product
 
@@ -14,9 +14,14 @@ class AddProductsToTheCart(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
+        try:
+            cart = Cart.objects.get(user=get_user_from_post_request(request), validated=False)
+        except:
+            cart = Cart.objects.create(user=get_user_from_post_request(request))
+
         serializer = CartItemsSerializer(data={
             "product": request.data["product_id"],
-            "cart": Cart.objects.get(user=get_user_from_post_request(request)).id,
+            "cart": cart.id,
             "quantity": int(request.data["quantity"]),
         })
 
@@ -38,5 +43,16 @@ class ValidateCart(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
-        price = Cart.objects.get(user=get_user_from_post_request(request))
-        return Response({"response": f"it's fine {all_items} for {all_items.compute_price}"})
+        try:
+            cart = Cart.objects.get(user=get_user_from_post_request(request), validated=False)
+        except:
+            return Response({"cart": "cart is empty"})
+
+        cart_items = CartItems.objects.filter(cart=cart)
+        cart.validated = True
+        cart.save()
+
+        return Response({
+            "cart": CartSerializer(cart).data,
+            "cart_items": FormCartItemsSerializer(cart_items, many=True).data,
+        })

@@ -28,5 +28,5 @@ urlpatterns = [
     path('api/account/signup', UserRegistrationList.as_view()),
     path('api/account/login', obtain_auth_token),
     path('api/cart/add_products', AddProductsToTheCart.as_view()),
-    path('api/cart/validate_cart', ValidateCart.as_view())
+    path('api/cart/validate', ValidateCart.as_view())
 ]
